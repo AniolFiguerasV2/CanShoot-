@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - CAN
+  - Floor
   layers:
   - Default
   - TransparentFX

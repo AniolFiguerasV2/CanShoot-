@@ -109,6 +109,15 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""recharge"",
+                    ""type"": ""Button"",
+                    ""id"": ""e8343324-9873-47eb-a39e-8c31ba4b6e86"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -133,6 +142,17 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Point"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""52e7bad0-4da8-46e7-a0ce-96dbc70a88fe"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""recharge"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -143,6 +163,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_shoot = m_Player.FindAction("shoot", throwIfNotFound: true);
         m_Player_Point = m_Player.FindAction("Point", throwIfNotFound: true);
+        m_Player_recharge = m_Player.FindAction("recharge", throwIfNotFound: true);
     }
 
     ~@PlayerInputs()
@@ -225,6 +246,7 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_shoot;
     private readonly InputAction m_Player_Point;
+    private readonly InputAction m_Player_recharge;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -244,6 +266,10 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Point".
         /// </summary>
         public InputAction @Point => m_Wrapper.m_Player_Point;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/recharge".
+        /// </summary>
+        public InputAction @recharge => m_Wrapper.m_Player_recharge;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -276,6 +302,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Point.started += instance.OnPoint;
             @Point.performed += instance.OnPoint;
             @Point.canceled += instance.OnPoint;
+            @recharge.started += instance.OnRecharge;
+            @recharge.performed += instance.OnRecharge;
+            @recharge.canceled += instance.OnRecharge;
         }
 
         /// <summary>
@@ -293,6 +322,9 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
             @Point.started -= instance.OnPoint;
             @Point.performed -= instance.OnPoint;
             @Point.canceled -= instance.OnPoint;
+            @recharge.started -= instance.OnRecharge;
+            @recharge.performed -= instance.OnRecharge;
+            @recharge.canceled -= instance.OnRecharge;
         }
 
         /// <summary>
@@ -347,5 +379,12 @@ public partial class @PlayerInputs: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPoint(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "recharge" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRecharge(InputAction.CallbackContext context);
     }
 }
