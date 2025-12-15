@@ -8,6 +8,8 @@ public class Can : MonoBehaviour
 
     public float bounceMultiplier = 0.9f;
 
+    public bool isOriginal;
+
     private Rigidbody rb;
     private Lifes lifes;
     private Points points;
@@ -66,13 +68,19 @@ public class Can : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+
         if (collision.gameObject.CompareTag("Floor"))
         {
             if (lifes != null)
             {
                 lifes.LoseLife(1);
             }
-            ResetCan();
+
+            CanCreator creator = FindAnyObjectByType<CanCreator>();
+            if (creator != null)
+            {
+                creator.ResetAllCans();
+            }
         }
 
         if (collision.gameObject.CompareTag("Border"))
