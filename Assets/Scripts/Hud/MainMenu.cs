@@ -6,11 +6,19 @@ public class MainMenu : MonoBehaviour
     public void PlayGame()
     {
         SceneManager.LoadScene("GameScene");
-        Debug.Log("FUNCIONAAAA");
     }
 
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void ReturnMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+    public void PointsMenu()
+    {
+        SceneManager.LoadScene("ScoreBoardScene");
     }
 }

@@ -6,7 +6,7 @@ public class Shoot : MonoBehaviour
     private PlayerInputs inputAction;
 
     [Header("Shoot Settings")]
-    public float raycastRange = 100f;
+    public float raycastRange = 400f;
     public int maxBullets = 6;
     public int currentBullets;
 

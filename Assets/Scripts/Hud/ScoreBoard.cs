@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -6,79 +7,84 @@ public class ScoreBoard : MonoBehaviour
 {
     public TMP_InputField nameInput;
     public TextMeshProUGUI scoreBoardText;
+    public GameObject inputCanvas;
+    public GameObject top10Canvas;
+    [SerializeField] private string playerName;
 
-    private int currentScore;
-    private const int maxScores = 10;
-
-    private List<ScoreEntry> scores = new List<ScoreEntry>();
-
-    void Start()
+    private void Start()
     {
-        currentScore = PlayerPrefs.GetInt("LastScore", 0);
-        LoadScores();
-        ShowScores();
+        bool fromGameScene = PlayerPrefs.GetInt("FromGameScene", 0) == 1;
+
+        if (fromGameScene)
+        {
+            inputCanvas.SetActive(true);
+            top10Canvas.SetActive(false);
+        }
+        else
+        {
+            inputCanvas.SetActive(false);
+            top10Canvas.SetActive(true);
+        }
+
+        ShowTopScores();
+
+        PlayerPrefs.SetInt("FromGameScene", 0);
+        PlayerPrefs.Save();
     }
 
-    public void SaveScore()
+    public void SetName()
     {
-        string playerName = nameInput.text;
+        playerName = nameInput.text;
+        int lastScore = PlayerPrefs.GetInt("LastScore", 0);
 
-        if (string.IsNullOrEmpty(playerName))
-            return;
+        SaveScore(playerName, lastScore);
 
-        scores.Add(new ScoreEntry(playerName, currentScore));
-        scores.Sort((a, b) => b.score.CompareTo(a.score));
+        inputCanvas.SetActive(false);
+        top10Canvas.SetActive(true);
 
-        if (scores.Count > maxScores)
-            scores.RemoveAt(scores.Count - 1);
-
-        SaveScores();
-        ShowScores();
+        Time.timeScale = 1f;
+        ShowTopScores();
     }
 
-    void ShowScores()
+    private void SaveScore(string name, int score)
     {
-        scoreBoardText.text = "";
+        List<string> scores = new List<string>();
+
+        for (int i = 0; i < 10; i++)
+        {
+            string entry = PlayerPrefs.GetString($"Score{i}", null);
+            if (!string.IsNullOrEmpty(entry))
+                scores.Add(entry);
+        }
+
+        scores.Add($"{name}:{score}");
+
+        scores = scores.OrderByDescending(s =>
+        {
+            string[] split = s.Split(':');
+            return int.Parse(split[1]);
+        }).Take(10).ToList();
 
         for (int i = 0; i < scores.Count; i++)
         {
-            scoreBoardText.text += $"{i + 1}. {scores[i].name} - {scores[i].score}\n";
+            PlayerPrefs.SetString($"Score{i}", scores[i]);
         }
+
+        PlayerPrefs.Save();
     }
 
-    void SaveScores()
+    private void ShowTopScores()
     {
-        for (int i = 0; i < scores.Count; i++)
-        {
-            PlayerPrefs.SetString($"ScoreName{i}", scores[i].name);
-            PlayerPrefs.SetInt($"ScoreValue{i}", scores[i].score);
-        }
-    }
+        scoreBoardText.text = "TOP 10\n";
 
-    void LoadScores()
-    {
-        scores.Clear();
-
-        for (int i = 0; i < maxScores; i++)
+        for (int i = 0; i < 10; i++)
         {
-            if (PlayerPrefs.HasKey($"ScoreName{i}"))
+            string entry = PlayerPrefs.GetString($"Score{i}", null);
+            if (!string.IsNullOrEmpty(entry))
             {
-                string name = PlayerPrefs.GetString($"ScoreName{i}");
-                int score = PlayerPrefs.GetInt($"ScoreValue{i}");
-                scores.Add(new ScoreEntry(name, score));
+                string[] split = entry.Split(':');
+                scoreBoardText.text += $"{i + 1}. {split[0]} - {split[1]}\n";
             }
         }
-    }
-}
-
-public class ScoreEntry
-{
-    public string name;
-    public int score;
-
-    public ScoreEntry(string name, int score)
-    {
-        this.name = name;
-        this.score = score;
     }
 }
